@@ -1,0 +1,49 @@
+@font-face {
+    font-family: 'Bangers';
+    src: url('../fonts/Bangers-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Audiowide';
+    src: url('../fonts/Audiowide-Regular.ttf');
+}
+
+body {
+    background: linear-gradient(35deg, #8455d8 49.9%, #9b62ff 50%) fixed;
+    background-size: cover;
+    margin: 0;
+    height: 100%;
+    font-family: Impact, Charcoal, sans-serif, cursive;
+    font-weight: bold;
+    color: white;
+}
+
+html {
+    height: 100%;
+}
+
+canvas {
+    background: none;
+    margin: auto;
+    border-radius: 7px;
+    border: 3px dashed rgba(255,255,255,0.2);
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#fontPreload {
+    font-family: 'Bangers', Impact, Charcoal, sans-serif, cursive;
+    position: absolute;
+    font-size: 0;
+    visibility: hidden;
+}
+
+#fontPreload .second {
+    font-family: 'Audiowide', Impact, Charcoal, sans-serif, cursive;
+}
