@@ -81,7 +81,7 @@ function init() {
 				quitButton = {x: posX - 99, y: posY + 129, x1: posX - 15, y1: posY + 161},
 				nextButton = {x: posX + 20, y: posY + 129, x1: posX + 104, y1: posY + 161};
 
-			if (this.isIntro === true) {
+			if (this.isIntro) {
 				if (message === 'hover') {
 					if (mouse.x >= playButton.x && mouse.x <= playButton.x1 && mouse.y >= playButton.y && mouse.y <= playButton.y1) {
 						this.intro();
@@ -99,7 +99,7 @@ function init() {
 					if (mouse.x >= playButton.x && mouse.x <= playButton.x1 && mouse.y >= playButton.y && mouse.y <= playButton.y1) {
 						// go to Choose Player screen
 						this.isIntro = false;
-						if (this.isChoosePlayer === false) {
+						if (!this.isChoosePlayer) {
 							setTimeout(() => {
 								this.isChoosePlayer = true;
 								this.choosePlayer();
@@ -108,7 +108,7 @@ function init() {
 					}
 				}
 			}
-			if (this.isChoosePlayer === true) {
+			if (this.isChoosePlayer) {
 				if (message === 'hover') {
 					if (mouse.x >= xButton.x && mouse.x <= xButton.x1 && mouse.y >= xButton.y && mouse.y <= xButton.y1) {
 						this.choosePlayer();
@@ -131,7 +131,7 @@ function init() {
 						// the choice is 'X'
 						playerOne = X;
 						playerTwo = playerOne === X ? O : X;
-						if (this.isChoosePlayer === false) {
+						if (!this.isChoosePlayer) {
 							setTimeout(() => {
 								this.isChooseMode = true;
 								this.chooseMode();
@@ -143,7 +143,7 @@ function init() {
 						// the choice is 'O'
 						playerOne = O;
 						playerTwo = playerOne === O ? X : O;
-						if (this.isChoosePlayer === false) {
+						if (!this.isChoosePlayer) {
 							setTimeout(() => {
 								this.isChooseMode = true;
 								this.chooseMode();
@@ -152,7 +152,7 @@ function init() {
 					}
 				}
 			}
-			if (this.isChooseMode === true) {
+			if (this.isChooseMode) {
 				if (message === 'hover') {
 					if (mouse.x >= singleButton.x && mouse.x <= singleButton.x1 && mouse.y >= singleButton.y && mouse.y <= singleButton.y1) {
 						this.chooseMode();
@@ -176,9 +176,9 @@ function init() {
 						this.mode = 'singlePlayer';
 						// set AI as second player
 						AI = playerTwo;
-						if (this.isGameStart === false) {
+						if (!this.isGameStart) {
 							setTimeout(() => {
-								if (this.firstTurn === true) {
+								if (this.firstTurn) {
 									this.whoStart();
 								}
 							}, 500);
@@ -188,9 +188,9 @@ function init() {
 						// multi player
 						this.isChooseMode = false;
 						this.mode = 'multiPlayer';
-						if (this.isGameStart === false) {
+						if (!this.isGameStart) {
 							setTimeout(() => {
-								if (this.firstTurn === true) {
+								if (this.firstTurn) {
 									this.whoStart();
 								}
 							}, 500);
@@ -198,7 +198,7 @@ function init() {
 					}
 				}
 			}
-			if (this.isGameStart === true) {
+			if (this.isGameStart) {
 				if (message === 'click') {
 					if (map[this.getCellOnClick(mouse)] === 0) {
 						this.playTurn();
@@ -207,7 +207,7 @@ function init() {
 					}
 				}
 			}
-			if (this.isGameResults === true) {
+			if (this.isGameResults) {
 				if (message === 'hover') {
 					if (mouse.x >= quitButton.x && mouse.x <= quitButton.x1 && mouse.y >= quitButton.y && mouse.y <= quitButton.y1) {
 						cursor.style.cursor = "pointer";
@@ -279,12 +279,12 @@ function init() {
 				}
 			}
 			else if (this.mode === 'singlePlayer') {
-				if (this.turn === playerOne && this.isGameStart === true) {
+				if (this.turn === playerOne && this.isGameStart) {
 					this.playerOne();
-					if (this.turn === AI && this.isGameStart === true) {
+					if (this.turn === AI && this.isGameStart) {
 						setTimeout(()=> {this.computerPlay()}, 200);
 					}
-				} else if (this.turn === AI && this.isGameStart === true && this.firstTurn === true) {
+				} else if (this.turn === AI && this.isGameStart && this.firstTurn) {
 					this.firstTurn = false;
 					setTimeout(()=> {this.computerPlay()}, 200);
 				}
@@ -399,7 +399,7 @@ function init() {
 			for (let i = 0; i < winCombo.length; i++) {
 				let playerOneWon = winCombo[i].every(num => arrOne.has(num));
 				let playerTwoWon = winCombo[i].every(num => arrTwo.has(num));
-				if (playerOneWon === true) {
+				if (playerOneWon) {
 					// winner is player one
 					this.isGameStart = false;
 					setTimeout(() => {
@@ -410,7 +410,7 @@ function init() {
 					}, 250);
 					break;
 				}
-				if (playerTwoWon === true) {
+				if (playerTwoWon) {
 					// winner is player two
 					this.isGameStart = false;
 					if (this.mode === 'singlePlayer') {
@@ -430,7 +430,7 @@ function init() {
 					break;
 				}
 				if (i === winCombo.length - 1 && this.turnCount === 9) {
-					if (playerTwoWon === false && playerTwoWon === false) {
+					if (!playerTwoWon && !playerTwoWon) {
 						this.isGameStart = false;
 						setTimeout(() => {
 							this.isGameResults = true;
@@ -459,7 +459,7 @@ function init() {
 			this.turn = playerOne;
 			this.firstTurn = true;
 			setTimeout(() => {
-				if (this.firstTurn === true) {
+				if (this.firstTurn) {
 					this.isGameResults = false;
 					this.whoStart();
 					cursor.style.cursor = "default";
