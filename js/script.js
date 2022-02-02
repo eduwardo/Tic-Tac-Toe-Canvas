@@ -306,61 +306,19 @@ function init() {
 		};
 
 		this.computerPlay = () => {
-			let moveCount = map.filter(num => num === 0).length, // moves remaining
-				setMove = Math.floor(Math.random() * map.length),
+			let setMove = Math.floor(Math.random() * map.length),
 				corners = [0, 2, 6, 8];
-			const generate = () => {
-				while (map[setMove] !== 0 && moveCount > 0) {
-					setMove = Math.floor(Math.random() * map.length);
-				}
-				return setMove;
-			};
-			const lastCorner = () => {
-				return map[0] === 0 ? 0 : map[2] === 0 ? 2 : map[6] === 0 ? 6 : map[8] === 0 ? 8 : generate();
-			};
-			const checkForWin = () => {
-				let checked = false;
-				if (map[0] === AI && map[2] === AI && !checked) {
-					if (map[1] === 0) {
-						setMove = 1;
-						checked = true;
-					}
-				}
-				if (map[2] === AI && map[8] === AI && !checked) {
-					if (map[5] === 0) {
-						setMove = 5;
-						checked = true;
-					}
-				}
-				if (map[6] === AI && map[8] === AI && !checked) {
-					if (map[7] === 0) {
-						setMove = 7;
-						checked = true;
-					}
-				}
-				if (map[0] === AI && map[6] === AI && !checked) {
-					if (map[3] === 0) {
-						setMove = 3;
-					} else {
-						generate();
-					}
-				} else {
-					generate();
-				}
-			};
 
 			const processNextMove = () => {
 				let moveSet = winCombo.map(combo => {
 					return {
 						cpu: {
-							combo,
 							winMoves: combo.map(i => { return { [i]: map[i] } }),
-							score: combo.reduce((value, i) => { return map[i] === AI ? value + 5 : map[i] === 0 ? value : value - 5 }, 0 )
+							score: combo.reduce((value, i) => { return map[i] === AI ? value + 5 : map[i] === 0 ? value : value - 100 }, 0 )
 						},
 						opponent: {
-							combo,
 							winMoves: combo.map(i => { return { [i]: map[i] } }),
-							score: combo.reduce((value, i) => { return map[i] === playerOne ? value + 5 : map[i] === 0 ? value : value - 5 }, 0 ) 
+							score: combo.reduce((value, i) => { return map[i] === playerOne ? value + 5 : map[i] === 0 ? value : value - 100 }, 0 ) 
 						}
 					}
 				});
@@ -375,39 +333,26 @@ function init() {
 					bestMoveOpponent = bestMoveOpponent.score < move.opponent.score && freeSlotMoveOpponent ? move.opponent : bestMoveOpponent;
 				});
 				
-				let nextPossibleMoves = bestMoveCPU.winMoves.filter((slot) => Object.values(slot)[0] !== AI).map((slot) => Object.keys(slot)[0]);
+				let nextPossibleMovesCPU = bestMoveCPU.winMoves.filter((slot) => Object.values(slot)[0] !== playerOne && Object.values(slot)[0] !== AI).map((slot) => Object.keys(slot)[0]);
+				let nextPossibleMovesOpponent = bestMoveOpponent.winMoves.filter((slot) => Object.values(slot)[0] !== playerOne && Object.values(slot)[0] !== AI).map((slot) => Object.keys(slot)[0]);
 
-				return { nextPossibleMoves }
+				return { bestMoveCPU, bestMoveOpponent, nextPossibleMovesCPU, nextPossibleMovesOpponent }
 			}
 			
-			let { nextPossibleMoves: nextPossibleMoves } = processNextMove();
+			let { bestMoveCPU, bestMoveOpponent, nextPossibleMovesCPU, nextPossibleMovesOpponent } = processNextMove();
 
 			if (this.turnCount === 1) {
 				setMove = corners[Math.floor(Math.random() * corners.length)];
-			}
-			else if (this.turnCount === 3) {
-				setMove = nextPossibleMoves[Math.floor(Math.random() * nextPossibleMoves.length)];
+			} 
+			else {
+				if (bestMoveOpponent.score <= 5 || bestMoveCPU.score === 10) {
+					setMove = nextPossibleMovesCPU[Math.floor(Math.random() * nextPossibleMovesCPU.length)];
 				}
-			else if (this.turnCount === 5) {
-				if (map[4] === 0) {
-					setMove = 4;
-				} else if (map[4] === playerOne) {
-					// check for opponent moves
-					let opp = {two: [map[1] === playerOne, 7], four: [map[3] === playerOne, 5],
-								six: [map[5] === playerOne, 3], eight: [map[7] === playerOne, 1]};
-					setMove =
-						opp.two[0] ? opp.two[1] : opp.four[0] ? opp.four[1] : opp.six[0] ? opp.six[1] : opp.eight[0] ? opp.eight[1] : lastCorner();
+				else {
+					setMove = nextPossibleMovesOpponent[Math.floor(Math.random() * nextPossibleMovesOpponent.length)];
 				}
 			}
-			else if (this.turnCount === 7) {
-				if (map[4] === 0) {
-					setMove = 4;
-				} else {
-					checkForWin();
-				}
-			} else {
-				generate();
-			}
+
 			map[setMove] = player;
 			this.fillBoard();
 			this.nextTurn();
