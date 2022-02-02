@@ -348,15 +348,46 @@ function init() {
 					generate();
 				}
 			};
+
+			const processNextMove = () => {
+				let moveSet = winCombo.map(combo => {
+					return {
+						cpu: {
+							combo,
+							winMoves: combo.map(i => { return { [i]: map[i] } }),
+							score: combo.reduce((value, i) => { return map[i] === AI ? value + 5 : map[i] === 0 ? value : value - 5 }, 0 )
+						},
+						opponent: {
+							combo,
+							winMoves: combo.map(i => { return { [i]: map[i] } }),
+							score: combo.reduce((value, i) => { return map[i] === playerOne ? value + 5 : map[i] === 0 ? value : value - 5 }, 0 ) 
+						}
+					}
+				});
+				
+				let bestMoveCPU = { score: -Infinity };
+				let bestMoveOpponent = { score: -Infinity };
+				
+				moveSet.forEach((move) => {
+					let freeSlotMoveCPU = move.cpu.winMoves.some((slot) => Object.values(slot)[0] === 0);
+					let freeSlotMoveOpponent = move.opponent.winMoves.some((slot) => Object.values(slot)[0] === 0);
+					bestMoveCPU = bestMoveCPU.score < move.cpu.score && freeSlotMoveCPU ? move.cpu : bestMoveCPU;
+					bestMoveOpponent = bestMoveOpponent.score < move.opponent.score && freeSlotMoveOpponent ? move.opponent : bestMoveOpponent;
+				});
+				
+				let nextPossibleMoves = bestMoveCPU.winMoves.filter((slot) => Object.values(slot)[0] !== AI).map((slot) => Object.keys(slot)[0]);
+
+				return { nextPossibleMoves }
+			}
+			
+			let { nextPossibleMoves: nextPossibleMoves } = processNextMove();
+
 			if (this.turnCount === 1) {
 				setMove = corners[Math.floor(Math.random() * corners.length)];
 			}
 			else if (this.turnCount === 3) {
-				setMove = corners[Math.floor(Math.random() * corners.length)];
-				while (map[setMove] !== 0 && moveCount > 0) {
-					setMove = corners[Math.floor(Math.random() * corners.length)];
+				setMove = nextPossibleMoves[Math.floor(Math.random() * nextPossibleMoves.length)];
 				}
-			}
 			else if (this.turnCount === 5) {
 				if (map[4] === 0) {
 					setMove = 4;
