@@ -320,25 +320,25 @@ function init() {
 			};
 			const checkForWin = () => {
 				let checked = false;
-				if (map[0] === AI && map[2] === AI && checked !== true) {
+				if (map[0] === AI && map[2] === AI && !checked) {
 					if (map[1] === 0) {
 						setMove = 1;
 						checked = true;
 					}
 				}
-				if (map[2] === AI && map[8] === AI && checked !== true) {
+				if (map[2] === AI && map[8] === AI && !checked) {
 					if (map[5] === 0) {
 						setMove = 5;
 						checked = true;
 					}
 				}
-				if (map[6] === AI && map[8] === AI && checked !== true) {
+				if (map[6] === AI && map[8] === AI && !checked) {
 					if (map[7] === 0) {
 						setMove = 7;
 						checked = true;
 					}
 				}
-				if (map[0] === AI && map[6] === AI && checked !== true) {
+				if (map[0] === AI && map[6] === AI && !checked) {
 					if (map[3] === 0) {
 						setMove = 3;
 					} else {
