@@ -46,7 +46,7 @@ function init() {
 	/*========================= Init Settings ==========================*/
 
 	let X = 1, O = -1;
-	let player = undefined;
+	let player;
 	let playerOne, playerTwo, AI;
 	let score = {playerOne: 0, playerTwo: 0, AI: 0};
 
@@ -368,10 +368,8 @@ function init() {
 
 		this.checkWin = () => {
 			playerTwo = (this.mode === 'singlePlayer') ? AI : playerTwo;
-			let arrOne = map.map((num, index) => num === playerOne ? index : '');
-			let arrTwo = map.map((num, index) => num === playerTwo ? index : '');
-			arrOne = new Set(arrOne);
-			arrTwo = new Set(arrTwo);
+			let arrOne = new Set(map.map((num, index) => num === playerOne ? index : ''));
+			let arrTwo = new Set(map.map((num, index) => num === playerTwo ? index : ''));
 			for (let i = 0; i < winCombo.length; i++) {
 				let playerOneWon = winCombo[i].every(num => arrOne.has(num));
 				let playerTwoWon = winCombo[i].every(num => arrTwo.has(num));
