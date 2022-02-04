@@ -28,6 +28,13 @@ function init() {
 			game.checkEvent(mouse, message);
 		}
 	};
+	// audio theme
+	const soundtrack = {
+		changeScreen: new Audio('./176666238.mp3'),
+		gameStarted: new Audio('./114248243.mp3'),
+		playerX: new Audio('./227830187.mp3'),
+		playerO: new Audio('./227830190.mp3')
+	}
 
 	/*========================= Table Settings ==========================*/
 
@@ -100,10 +107,11 @@ function init() {
 						// go to Choose Player screen
 						this.isIntro = false;
 						if (!this.isChoosePlayer) {
+							this.playSound('changeScreen');
 							setTimeout(() => {
 								this.isChoosePlayer = true;
 								this.choosePlayer();
-							}, 500);
+							}, 200);
 						}
 					}
 				}
@@ -132,10 +140,11 @@ function init() {
 						playerOne = X;
 						playerTwo = playerOne === X ? O : X;
 						if (!this.isChoosePlayer) {
+							this.playSound('changeScreen');
 							setTimeout(() => {
 								this.isChooseMode = true;
 								this.chooseMode();
-							}, 500);
+							}, 200);
 						}
 					}
 					else if (mouse.x >= oButton.x && mouse.x <= oButton.x1 && mouse.y >= oButton.y && mouse.y <= oButton.y1) {
@@ -144,10 +153,11 @@ function init() {
 						playerOne = O;
 						playerTwo = playerOne === O ? X : O;
 						if (!this.isChoosePlayer) {
+							this.playSound('changeScreen');
 							setTimeout(() => {
 								this.isChooseMode = true;
 								this.chooseMode();
-							}, 500);
+							}, 200);
 						}
 					}
 				}
@@ -177,11 +187,12 @@ function init() {
 						// set AI as second player
 						AI = playerTwo;
 						if (!this.isGameStart) {
+							this.playSound('gameStarted', 200);
 							setTimeout(() => {
 								if (this.firstTurn) {
 									this.whoStart();
 								}
-							}, 500);
+							}, 200);
 						}
 					}
 					else if (mouse.x >= multiButton.x && mouse.x <= multiButton.x1 && mouse.y >= multiButton.y && mouse.y <= multiButton.y1) {
@@ -189,11 +200,12 @@ function init() {
 						this.isChooseMode = false;
 						this.mode = 'multiPlayer';
 						if (!this.isGameStart) {
+							this.playSound('gameStarted', 200);
 							setTimeout(() => {
 								if (this.firstTurn) {
 									this.whoStart();
 								}
-							}, 500);
+							}, 200);
 						}
 					}
 				}
@@ -271,6 +283,7 @@ function init() {
 
 		this.playTurn = () => {
 			if (this.mode === 'multiPlayer') {
+				this.playPlayerMoveSound();
 				if (this.turn === playerOne) {
 					this.playerOne();
 				}
@@ -280,13 +293,20 @@ function init() {
 			}
 			else if (this.mode === 'singlePlayer') {
 				if (this.turn === playerOne && this.isGameStart) {
+					this.playPlayerMoveSound();
 					this.playerOne();
 					if (this.turn === AI && this.isGameStart) {
-						setTimeout(()=> {this.computerPlay()}, 200);
+						setTimeout(()=> {
+							player === X ? this.playSound('playerX') : this.playSound('playerO');
+							this.computerPlay();
+						}, 400);
 					}
 				} else if (this.turn === AI && this.isGameStart && this.firstTurn) {
 					this.firstTurn = false;
-					setTimeout(()=> {this.computerPlay()}, 200);
+					setTimeout(()=> {
+						this.playPlayerMoveSound();
+						this.computerPlay();
+					}, 400);
 				}
 			}
 		};
@@ -729,7 +749,47 @@ function init() {
 		this.getCellOnClick = (mouse) => {
 			return (Math.floor((mouse.x - rect.left) / cellSize) % 3) + (Math.floor((mouse.y - rect.top) / cellSize) * 3);
 		};
+
+		/*========================== Set sound ==========================*/
+
+		this.playPlayerMoveSound = () => {
+			player === X ? this.playSound('playerX') : this.playSound('playerO');
+		}
+		
+		this.playSound = (type, ms = 100) => {
+			setTimeout(() => {
+				
+				const play = (type) => {
+					soundtrack[type].pause();
+					soundtrack[type].currentTime = 0; 
+					soundtrack[type].play();
+				};
+
+				switch(type) {
+					case 'changeScreen': 
+						play(type);
+						break;
+					case 'gameStarted': 
+						soundtrack.changeScreen.pause();
+						play(type);
+						break;
+					case 'playerX': 
+						soundtrack.playerO.pause();
+						soundtrack.gameStarted.pause();
+						play(type);
+						break;
+					case 'playerO': 
+						soundtrack.playerX.pause();
+						soundtrack.gameStarted.pause();
+						play(type);
+						break;
+					default:
+						break;
+				}
+			}, ms);
+		}
 	}
+
 	let game = new TicTacToe();
 	game.intro();
 }
