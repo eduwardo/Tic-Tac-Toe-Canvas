@@ -30,10 +30,10 @@ function init() {
 	};
 	// audio theme
 	const soundtrack = {
-		changeScreen: new Audio('./176666238.mp3'),
-		gameStarted: new Audio('./114248243.mp3'),
-		playerX: new Audio('./227830187.mp3'),
-		playerO: new Audio('./227830190.mp3')
+		changeScreen: new Audio(soundtrack_176666238),
+		gameStarted: new Audio(soundtrack_114248243),
+		playerX: new Audio(soundtrack_227830187),
+		playerO: new Audio(soundtrack_227830190)
 	}
 
 	/*========================= Table Settings ==========================*/
